@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator Sederhana - Single File</title>
+    <style>
+        /* CSS: Mengatur Tampilan (Grid Layout) */
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: #f0f2f5; 
+        }
+
+        .calculator { 
+            width: 320px; 
+            background: #2d3436; 
+            padding: 20px; 
+            border-radius: 15px; 
+            box-shadow: 0 15px 30px rgba(0,0,0,0.4); 
+        }
+
+        #display { 
+            width: 100%; 
+            height: 70px; 
+            font-size: 2.5rem; 
+            text-align: right; 
+            margin-bottom: 20px; 
+            padding: 10px; 
+            box-sizing: border-box; 
+            border: none; 
+            border-radius: 8px;
+            background: #dfe6e9; 
+            color: #2d3436;
+        }
+
+        .buttons { 
+            display: grid; 
+            grid-template-columns: repeat(4, 1fr); 
+            gap: 12px; 
+        }
+
+        .btn { 
+            padding: 20px; 
+            font-size: 1.2rem; 
+            font-weight: bold;
+            border: none; 
+            border-radius: 10px; 
+            cursor: pointer; 
+            background: #636e72; 
+            color: white; 
+            transition: all 0.2s; 
+        }
+
+        .btn:hover { background: #b2bec3; transform: translateY(-2px); }
+        .btn:active { transform: translateY(0); }
+
+        .operator { background: #fd9644; }
+        .operator:hover { background: #fa8231; }
+
+        .equal { 
+            background: #26de81; 
+            grid-row: span 2; 
+        }
+        .equal:hover { background: #20bf6b; }
+
+        .clear { 
+            background: #eb4d4b; 
+            grid-column: span 2; 
+        }
+        .clear:hover { background: #ff7675; }
+
+        .zero { grid-column: span 1; }
+    </style>
+</head>
+<body>
+
+    <div class="calculator">
+        <!-- Fitur: Layar Display -->
+        <input type="text" id="display" readonly value="0">
+        
+        <div class="buttons">
+            <!-- Fitur: Tombol Clear -->
+            <button class="btn clear" onclick="clearDisplay()">C</button>
+            <button class="btn operator" onclick="appendOperator('/')">/</button>
+            <button class="btn operator" onclick="appendOperator('*')">×</button>
+            
+            <button class="btn" onclick="appendNumber('7')">7</button>
+            <button class="btn" onclick="appendNumber('8')">8</button>
+            <button class="btn" onclick="appendNumber('9')">9</button>
+            <button class="btn operator" onclick="appendOperator('-')">-</button>
+            
+            <button class="btn" onclick="appendNumber('4')">4</button>
+            <button class="btn" onclick="appendNumber('5')">5</button>
+            <button class="btn" onclick="appendNumber('6')">6</button>
+            <button class="btn operator" onclick="appendOperator('+')">+</button>
+            
+            <button class="btn" onclick="appendNumber('1')">1</button>
+            <button class="btn" onclick="appendNumber('2')">2</button>
+            <button class="btn" onclick="appendNumber('3')">3</button>
+            
+            <!-- Fitur: Perhitungan (Equal) -->
+            <button class="btn equal" onclick="calculate()">=</button>
+            
+            <button class="btn zero" onclick="appendNumber('0')">0</button>
+            <!-- Fitur: Desimal -->
+            <button class="btn" onclick="appendNumber('.')">.</button>
+        </div>
+    </div>
+
+    <script>
+        /* JavaScript: Logika Kalkulator */
+        let display = document.getElementById('display');
+        let currentInput = '0';
+
+        function updateDisplay() {
+            display.value = currentInput;
+        }
+
+        function appendNumber(num) {
+            // Validasi: Cegah double desimal
+            if (num === '.' && currentInput.includes('.')) return;
+            
+            if (currentInput === '0' && num !== '.') {
+                currentInput = num;
+            } else {
+                currentInput += num;
+            }
+            updateDisplay();
+        }
+
+        function appendOperator(op) {
+            // Validasi: Gak error kalau pencet operator berulang
+            const lastChar = currentInput.slice(-1);
+            if (['+', '-', '*', '/'].includes(lastChar)) {
+                currentInput = currentInput.slice(0, -1) + op;
+            } else {
+                currentInput += op;
+            }
+            updateDisplay();
+        }
+
+        function clearDisplay() {
+            currentInput = '0';
+            updateDisplay();
+        }
+
+        function calculate() {
+            try {
+                // Menghitung string matematika
+                let result = eval(currentInput);
+                
+                // Membatasi desimal agar tidak terlalu panjang (max 10 angka)
+                currentInput = Number(result.toFixed(10)).toString();
+                updateDisplay();
+            } catch (e) {
+                display.value = "Error";
+                currentInput = '0';
+            }
+        }
+    </script>
+</body>
+</html>
